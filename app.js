@@ -4,20 +4,22 @@ const mongoose= require("mongoose");
 
 
 
-
 const clintSchema = {
-    pDate:String,
-    mobile:String,
-    location:String
+    name:String,
+    number:String,
+    email:String,
+    message:String
 }
 const Clint = mongoose.model("Clint",clintSchema)
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-    service:"gmail",
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
     auth: {
       user: testAccount.user, // generated ethereal user
       pass: testAccount.pass, // generated ethereal password
-    },
+    }
 });
 const port = 8080
 
@@ -32,10 +34,12 @@ app.post("/api/mail",(req,res)=>{
     let clint =new Clint(req.body)
     clint.save();
     let mes =`You have a new clint Details are :-
-    Pick up date : ${req.body.pDate}
-    Mobile No    : ${req.body.mobile}
-    location     : ${req.body.location}
+    Pick up date : ${req.body.name}
+    Mobile No    : ${req.body.number}
+    Email        : ${req.body.email}
+    Message      : ${req.body.message}
     `;
+    console.log(mes);
     mailSend(mes).catch(console.error)  
     res.redirect("/")
 })
@@ -48,7 +52,7 @@ const mailSend =async(message)=> {
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: testAccount.user, // sender address
-    to: "ankitkumar6star@gmail.com", // list of receivers
+    to: "admin@sdcabwale.com", // list of receivers
     subject: "New Clint", // Subject line
     text: message, // plain text body
   });
