@@ -8,7 +8,9 @@ const clintSchema = {
     name:String,
     number:String,
     email:String,
-    message:String
+    message:String,
+    location:String,
+    pDate:String
 }
 const Clint = mongoose.model("Clint",clintSchema)
 // create reusable transporter object using the default SMTP transport
@@ -31,19 +33,47 @@ app.get("/",(req,res)=>{
 })
 
 app.post("/api/mail",(req,res)=>{
-    let clint =new Clint(req.body)
+    let data ={
+      name:req.body.name,
+      number:req.body.number,
+      email:req.body.email,
+      message:req.body.message,
+      pDate:"",
+      location:""
+    }
+    let clint =new Clint(data);
     clint.save();
     let mes =`You have a new clint Details are :-
-    Pick up date : ${req.body.name}
-    Mobile No    : ${req.body.number}
-    Email        : ${req.body.email}
-    Message      : ${req.body.message}
+    Name         : ${data.name}
+    Mobile No    : ${data.number}
+    Email        : ${data.email}
+    Message      : ${data.message}
     `;
     console.log(mes);
     mailSend(mes).catch(console.error)  
     res.redirect("/")
 })
-
+app.post("/api/mail2",(req,res)=>{
+  let data ={
+    name:"",
+    number:req.body.number,
+    email:"",
+    message:"Need ride on the date",
+    pDate:req.body.pDate,
+    location:req.body.location
+  }
+  let clint =new Clint(data);
+  //clint.save();
+  let mes =`You have a new clint Details are :-
+  Pick up date : ${data.pDate}
+  Mobile No    : ${data.number}
+  Location     : ${data.location}
+  Message      : ${data.message}
+  `;
+  console.log(mes);
+  mailSend(mes).catch(console.error)  
+  res.redirect("/")
+})
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
